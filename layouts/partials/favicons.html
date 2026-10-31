@@ -1,0 +1,4 @@
+    {{- /* Override del tema: un solo favicon SVG en static/, sin la colección de PNG/ICO */ -}}
+    <link rel="icon" type="image/svg+xml" href="{{ "favicon.svg" | relURL }}">
+    <meta name="theme-color" content="{{ .Site.Params.favicon.theme }}">
+    <meta name="msapplication-TileColor" content="{{ .Site.Params.favicon.msapplication }}">

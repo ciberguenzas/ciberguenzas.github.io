@@ -1,0 +1,13 @@
+# Ajustes sobre el es.toml del tema (el resto de cadenas vienen de ahí)
+
+[tableOfContents]
+other = "Índice"
+
+[home]
+other = "Inicio"
+
+[notFound]
+other = "404. Esta página no existe. Como aquel plan de respuesta a incidentes."
+
+[lastModified]
+other = "Última actualización"

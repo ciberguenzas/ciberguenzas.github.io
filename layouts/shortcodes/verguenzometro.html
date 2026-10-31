@@ -1,0 +1,21 @@
+{{- /* Uso: {{< verguenzometro 4 >}} o {{< verguenzometro nivel=4 >}}  (1-5) */ -}}
+{{- $nivel := 3 -}}
+{{- if .IsNamedParams -}}
+  {{- $nivel = int (.Get "nivel" | default 3) -}}
+{{- else -}}
+  {{- $nivel = int (.Get 0 | default 3) -}}
+{{- end -}}
+{{- if lt $nivel 1 }}{{ $nivel = 1 }}{{ end -}}
+{{- if gt $nivel 5 }}{{ $nivel = 5 }}{{ end -}}
+{{- $textos := slice "Un despiste" "Mal, pero se entiende" "Vergüenza ajena" "Tierra, trágame" "Cibergüenza histórica" -}}
+{{- $texto := index $textos (sub $nivel 1) -}}
+<div class="verguenzometro" role="img" aria-label="Vergüenzómetro: {{ $nivel }} de 5, {{ $texto }}">
+  <span class="verguenzometro__label">vergüenzómetro</span>
+  <span class="verguenzometro__bar" aria-hidden="true">[
+    {{- range seq 5 -}}
+      <span class="verguenzometro__seg{{ if le . $nivel }} is-on{{ end }}">{{ if le . $nivel }}█{{ else }}░{{ end }}</span>
+    {{- end -}}
+  ]</span>
+  <span class="verguenzometro__score" aria-hidden="true">{{ $nivel }}/5</span>
+  <span class="verguenzometro__text" aria-hidden="true">{{ $texto }}</span>
+</div>
