@@ -137,7 +137,7 @@ Con el recuento me vale, pero quiero verlo dentro de una petición. `mod_dumpio`
 LC_ALL=C grep -a -F "client 192.168.72.1:54322]" logs/error.log | LC_ALL=C grep -a "dumpio_in (data-HEAP):" | head -8
 ```
 
-![Salida: inicio de la conexión 54322 en el error.log](image-20261101-135205.png)
+![Salida: inicio de la conexión 54322 en el error.log](image-20261101-135249.png)
 
 La conexión `54322` llega a las 08:42:59 con `POST /index.php`, `Content-Type: multipart/form-data; boundary=ZZZZZZZZZZ` y `Transfer-Encoding: chunked`. Ahí está todo lo que hacía falta ver, y el separador es el mismo que me daba el recuento.
 
@@ -150,6 +150,10 @@ La conexión `54322` llega a las 08:42:59 con `POST /index.php`, `Content-Type: 
 Esta ya la tengo prácticamente de la tarea 3, y de paso el enunciado me confirma lo que ahí dejé como supuesto: que el pool era de 150 y el exploit lo llenó dejando un único hueco para que todas sus peticiones cayeran en el mismo proceso. Las subidas estancadas eran la tanda de `POST /index.php` y salían 149 en el `access.log`.
 
 Como no me suelo fiar de un solo artefacto, lo cuento también en el `error.log`, pero por conexiones y no por líneas. Cada subida estancada lleva el `boundary=ZZZZZZZZZZ`, así que saco los puertos de origen de las líneas que lo contienen y cuento cuántos distintos hay.
+
+```bash
+LC_ALL=C grep -a -F "boundary=ZZZZZZZZZZ" logs/error.log | LC_ALL=C grep -a -oE "client 192.168.72.1:[0-9]+" | sort -u | wc -l
+```
 
 ![Salida: 149 conexiones distintas con el boundary ZZZZZZZZZZ](image-20261101-142120.png)
 
@@ -197,7 +201,7 @@ Un total de 7 veces sale `134217728`, que son 128 MiB, el `memory_limit` que tra
 
 > *The exploit leaks heap memory from the server to retrieve a heap address value, which is then used to facilitate the remote code execution process. What is the name of the cookie through which this leaked data is delivered to the attacker?*
 
-Una respuesta con **heap** dentro pesa, y la de `774455 bytes` de las 08:43:01 ya la tenía fichada en el `access.log`. Era un `POST` a `/api/health.php` que otras veces viene con un **JSON** de `15 bytes`. Si va en una cookie, como dice el enunciado, es una cabecera `Set-Cookie`. Con `tshark` busco todas las que el servidor le ha puesto a `192.168.72.1`, con la longitud al lado y el valor recortado a 50 caracteres, que ya me imagino lo que viene. El `2>/dev/null` es porque el **disector** `MIME multipart` protesta en cada `POST` de este tío, y la hora la saco con `frame.time_utc` para que coincida con los logs.
+Una respuesta con **heap** dentro pesa, y la de `774455 bytes` de las 08:43:01 ya la tenía fichada en el `access.log`. Era un `POST` a `/api/health.php` que otras veces viene con un **JSON** de `15 bytes`. Si va en una cookie, como dice el enunciado, es una cabecera `Set-Cookie`. Con `tshark` busco todas las que el servidor le ha puesto a `192.168.72.1`, con la longitud al lado y el valor recortado a 50 caracteres, que ya me imagino lo que viene. El `2>/dev/null` es porque el **disector** `MIME multipart` protesta en cada `POST` de este tío. Ojo con la hora: `frame.time` sale en la hora local de mi máquina, UTC-4, así que a lo que marque hay que sumarle cuatro horas para cuadrarlo con los logs.
 
 ```bash
 tshark -r Capture.pcap -Y 'http.set_cookie && ip.dst==192.168.72.1' -T fields -e frame.number -e frame.time -e tcp.stream -e http.set_cookie 2>/dev/null | awk -F'\t' '{print $1, $2, "stream", $3, "longitud", length($4), substr($4,1,50)}'
@@ -205,7 +209,7 @@ tshark -r Capture.pcap -Y 'http.set_cookie && ip.dst==192.168.72.1' -T fields -e
 
 ![Salida de tshark: cookies Set-Cookie enviadas al atacante](image-20261101-175921.png)
 
-Salen 4 cookies, tres de ellas sesiones normales de PHP, 32 hexadecimales más `path=/`. Una de ellas, `stream 807` a las 08:43:01.942, mide `773518` y arranca con `WWWWWWWW%FF%FF%FF...`, bytes crudos escapados en porcentaje donde este servidor solo reparte hexadecimales. Casi 3/4 de mega pesa la cookie, y PHP tan tranquilo. Es el **heap** del proceso saliendo por la cabecera de sesión de toda la vida, y al atacante le bastó con leer la respuesta como haría cualquier navegador.
+Salen 4 cookies, tres de ellas sesiones normales de PHP, 32 hexadecimales más `path=/`. Una de ellas, `stream 807` a las 08:43:01.942 UTC, mide `773518` y arranca con `WWWWWWWW%FF%FF%FF...`, bytes crudos escapados en porcentaje donde este servidor solo reparte hexadecimales. Casi 3/4 de mega pesa la cookie, y PHP tan tranquilo. Es el **heap** del proceso saliendo por la cabecera de sesión de toda la vida, y al atacante le bastó con leer la respuesta como haría cualquier navegador.
 
 {{< nota >}}
 Si se quiere hacer con Wireshark, el mismo filtro y Follow TCP Stream sobre el `807` para ver el chorro entero, por si tienes curiosidad de cómo lucen `770 KB` de memoria metidos en una cookie.
@@ -220,7 +224,7 @@ Si se quiere hacer con Wireshark, el mismo filtro y Follow TCP Stream sobre el `
 De los 3 logs, el único que muestra tamaños es el `error.log`. `mod_dumpio` con `trace7` copia todo lo que sale por cada conexión en trozos. Para cada trozo escribe cuántos bytes trae y luego el contenido. Si la cookie salió por ahí, el número ya aparece. Busco un `dumpio_out` de seis cifras o más, porque lo normal cabe en unas decenas de bytes. El `cut` a 200 caracteres va primero para que `grep` no se trague el valor entero, uso `-a` para que no lo trate como binario y `-B4 -A1` para ver de qué cabecera cuelga el trozo.
 
 ```bash
-cut -c1-200 error.log | grep -a -n --color=always -B4 -A1 "dumpio_out (data-HEAP): [0-9]\{6,\} bytes"
+cut -c1-200 logs/error.log | grep -a -n --color=always -B4 -A1 "dumpio_out (data-HEAP): [0-9]\{6,\} bytes"
 ```
 
 ![Salida: trozo dumpio_out de 773518 bytes con la cookie](image-20261101-181244.png)
@@ -246,7 +250,7 @@ La suma da `774455` clavaditos. Ese campo cuenta todo lo que Apache metió en el
 La prueba más clara de que en el servidor ya está corriendo código del atacante es verlo abrir él mismo una conexión hacia `192.168.72.1`. En el `.pcap` eso se ve como un `SYN` sin `ACK` que sale de `192.168.72.50`. Le pido a `tshark` justo esos segmentos, con el **stream** y los puertos, para saber dónde seguir mirando. La hora la saco con `frame.time_utc` en vez de `frame.time`, porque ese campo siempre aparece en la hora local de la máquina y la mía está en UTC-4; ya me hizo perder tiempo usar el `-t ud`.
 
 ```bash
-tshark -r Capture.pcap -t ud -Y 'ip.src==192.168.72.50 && ip.dst==192.168.72.1 && tcp.flags.syn==1 && tcp.flags.ack==0' -T fields -e frame.number -e frame.time -e tcp.stream -e tcp.srcport -e tcp.dstport 2>/dev/null
+tshark -r Capture.pcap -Y 'ip.src==192.168.72.50 && ip.dst==192.168.72.1 && tcp.flags.syn==1 && tcp.flags.ack==0' -T fields -e frame.number -e frame.time_utc -e tcp.stream -e tcp.srcport -e tcp.dstport 2>/dev/null
 ```
 
 ![Salida de tshark: SYN del servidor hacia el atacante](image-20261101-184535.png)
