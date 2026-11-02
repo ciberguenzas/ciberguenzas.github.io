@@ -1,0 +1,2 @@
+{{- /* Imágenes de markdown: carga diferida y clic para abrir el original (las capturas de terminal se leen mal encogidas) */ -}}
+<a href="{{ .Destination | safeURL }}" target="_blank" rel="noopener"><img src="{{ .Destination | safeURL }}" alt="{{ .Text }}"{{ with .Title }} title="{{ . }}"{{ end }} loading="lazy" decoding="async"></a>

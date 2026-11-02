@@ -1,0 +1,7 @@
+{{- /* Miniatura del logo junto al título. Front matter: logo = imagen del bundle del post. */ -}}
+{{- with .Params.logo -}}
+  {{- with $.Resources.Get . -}}
+    {{- $mini := .Resize "128x" -}}
+    <img class="post-logo-mini" src="{{ $mini.RelPermalink }}" alt="" width="{{ $mini.Width }}" height="{{ $mini.Height }}">
+  {{- end -}}
+{{- end -}}
