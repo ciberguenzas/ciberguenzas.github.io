@@ -1,0 +1,21 @@
+/* Nota informativa: shortcode {{< nota >}} (panel "info" de Confluence) */
+$nota: #4C9AFF;
+
+.nota {
+  margin: 1.5em 0;
+  padding: 0.8em 1em;
+  border: 1px solid rgba($nota, 0.35);
+  border-left: 4px solid $nota;
+  border-radius: 4px;
+  background: rgba($nota, 0.08);
+}
+
+/* Logo centrado al principio de los writeups */
+.post-logo {
+  text-align: center;
+
+  img {
+    width: 220px;
+    max-width: 60%;
+  }
+}
