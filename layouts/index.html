@@ -1,0 +1,85 @@
+{{ define "main" }}
+{{- /* Cibergüenzas: portada del tema XP en castellano. En escritorio abre la ventana
+       configurada en params.xp.homeWindow (la lista de posts); en móvil muestra la
+       pantalla «Hoy» de Windows Mobile con el menú y las últimas cibergüenzas. */ -}}
+{{- $sectionIconDefaults := dict "blog" "MyDocuments" "posts" "MyDocuments" "projects" "MyComputer" "about" "SystemProperties" -}}
+{{- $mainSections := site.Params.mainSections | default (slice "posts") -}}
+{{- $iconBase := "icons/xp/" | relURL -}}
+{{- $hwURL := "/posts/" -}}
+{{- $hwTitle := site.Title -}}
+{{- $hwIcon := "MyDocuments" -}}
+{{- with site.Params.xp -}}
+  {{- with .homeWindow -}}{{- $hwURL = . -}}{{- end -}}
+  {{- with .homeWindowTitle -}}{{- $hwTitle = . -}}{{- end -}}
+  {{- with .homeWindowIcon -}}{{- $hwIcon = . -}}{{- end -}}
+{{- end -}}
+{{- $hwPage := site.GetPage $hwURL -}}
+{{- $posts := where site.RegularPages "Type" "in" $mainSections -}}
+
+{{ with $hwPage }}
+<!-- Escritorio: ventana que se abre al entrar -->
+<div class="xp-window" id="home-window" style="width:780px; height:82%;">
+  <div class="window-titlebar">
+    <div class="window-titlebar-icon">
+      <img src="{{ $iconBase }}{{ $hwIcon }}.png" alt="" width="16" height="16">
+    </div>
+    <span class="window-title">{{ $hwTitle }}</span>
+    <div class="window-controls">
+      <button class="btn-minimize" title="Minimizar">&#8722;</button>
+      <button class="btn-maximize" title="Maximizar">&#9723;</button>
+      <button class="btn-close" title="Cerrar" data-close-window>&#10005;</button>
+    </div>
+  </div>
+  <div class="window-content" style="padding:0; overflow:hidden; display:flex; flex-direction:column;">
+    <iframe id="home-iframe" src="{{ .RelPermalink }}" title="{{ $hwTitle }}" style="width:100%; flex:1; border:none;"></iframe>
+  </div>
+</div>
+{{ end }}
+
+<!-- Móvil: pantalla «Hoy» de Windows Mobile 2003 -->
+<div class="mobile-today-screen">
+  <div class="wm2003-today">
+    <div class="wm2003-today-bg">
+      <div class="wm2003-today-header">
+        <div class="wm2003-today-date" id="wm-today-date"></div>
+      </div>
+      <div class="wm2003-today-owner">
+        {{ with site.Params.avatar }}
+        <img class="wm2003-avatar" src="{{ . | relURL }}" alt="">
+        {{ end }}
+        <div>
+          <div class="wm2003-owner-name">{{ site.Title }}</div>
+          <div class="wm2003-owner-bio">{{ site.Params.bio }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="wm2003-today-items">
+      {{ range site.Menus.main }}
+      <a href="{{ .URL }}" class="wm2003-today-item">
+        <img src="{{ $iconBase }}{{ .Params.icon | default (index $sectionIconDefaults .Identifier) | default "FolderClosed" }}.png" alt="" width="16" height="16">
+        <span>{{ .Name }}</span>
+      </a>
+      {{ end }}
+      {{ with site.Params.github }}
+      <a href="https://github.com/{{ . }}" class="wm2003-today-item" target="_blank" rel="noopener">
+        <img src="{{ $iconBase }}InternetExplorer6.png" alt="" width="16" height="16">
+        <span>GitHub</span>
+      </a>
+      {{ end }}
+    </div>
+    {{ with first 10 $posts }}
+    <div class="wm2003-today-section">Últimas cibergüenzas</div>
+    <div class="wm2003-today-items">
+      {{ range . }}
+      <a href="{{ .RelPermalink }}" class="wm2003-today-item">
+        <img src="{{ $iconBase }}Notepad.png" alt="" width="16" height="16">
+        <span>{{ .Title }}</span>
+        <span class="wm2003-item-detail">{{ .Date | time.Format "02/01/2006" }}</span>
+      </a>
+      {{ end }}
+    </div>
+    {{ end }}
+  </div>
+</div>
+
+{{ end }}

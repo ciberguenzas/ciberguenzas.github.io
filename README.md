@@ -2,7 +2,17 @@
 
 El muro de la vergüenza de la ciberseguridad: fallos reales, ridículos y evitables, con la lección detrás.
 
-Hugo (extended) + tema [hello-friend-ng](https://github.com/rhazdon/hugo-theme-hello-friend-ng) como submódulo + GitHub Pages.
+Hugo (extended) + tema [hugo-theme-windowsxp](https://github.com/probonas/hugo-theme-windowsxp) como submódulo + GitHub Pages.
+
+## Tema
+
+El blog es un escritorio de Windows XP: cada entrada del menú de `hugo.toml` es un icono del escritorio y del menú Inicio, y cada página se abre en una ventana. En móvil (768 px o menos) el escritorio desaparece y queda una página normal.
+
+Lo propio va encima del tema, sin tocar el submódulo:
+
+- `layouts/`: plantillas del tema copiadas y traducidas, sin los menús y botones que no hacían nada, más la 404 como cuadro de error.
+- `assets/css/ciberguenzas.css`: estilos que se cargan detrás de los del tema (bloques de código, nota, vergüenzómetro, índice).
+- Los iconos son los de serie del tema según el `identifier` del menú.
 
 ## Clonar
 

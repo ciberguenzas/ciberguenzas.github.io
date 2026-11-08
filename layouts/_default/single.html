@@ -1,0 +1,126 @@
+{{ define "main" }}
+{{- /* Cibergüenzas: single del tema XP en castellano. Cada post va en una ventana de Bloc
+       de notas con su logo, índice, categoría y tags. Fuera los menús y botones del tema
+       que no hacían nada. */ -}}
+{{- $iconBase := "icons/xp/" | relURL -}}
+{{- $homeURL := site.Home.RelPermalink -}}
+{{- $section := .Section -}}
+{{- $mainSections := site.Params.mainSections | default (slice "posts") -}}
+{{- $isPost := in $mainSections $section -}}
+{{- $icon := cond $isPost "Notepad" "GenericDocument" -}}
+
+{{- $parentURL := $homeURL -}}
+{{- $parentTitle := "Escritorio" -}}
+{{- range site.Menus.main -}}
+  {{- if eq .Identifier $section -}}
+    {{- $parentURL = .URL -}}
+    {{- $parentTitle = .Params.windowTitle | default .Name -}}
+  {{- end -}}
+{{- end -}}
+
+<div class="xp-window" data-url="{{ .RelPermalink }}"{{ if $isPost }} style="width:880px; max-width:none;"{{ end }}>
+
+  <!-- Barra de título -->
+  <div class="window-titlebar">
+    <div class="window-titlebar-icon">
+      <img src="{{ $iconBase }}{{ $icon }}.png" alt="" width="16" height="16">
+    </div>
+    <span class="window-title">{{ .Title }}</span>
+    <div class="window-controls">
+      <button class="btn-minimize" title="Minimizar">&#8722;</button>
+      <button class="btn-maximize" title="Maximizar">&#9723;</button>
+      <button class="btn-close" title="Cerrar" data-href="{{ $parentURL }}">&#10005;</button>
+    </div>
+  </div>
+
+  <!-- Botones de navegación: solo los que hacen algo -->
+  <div class="window-nav-toolbar">
+    <a class="nav-btn nav-btn-back" href="{{ $parentURL }}" data-title="{{ $parentTitle }}" title="Volver a {{ $parentTitle }}">
+      <img src="{{ $iconBase }}Back.png" alt="" width="22" height="22">
+      <span class="nav-btn-label">Atrás</span>
+    </a>
+    <a class="nav-btn" href="{{ $parentURL }}" data-title="{{ $parentTitle }}" title="Subir un nivel">
+      <img src="{{ $iconBase }}Up.png" alt="" width="22" height="22">
+    </a>
+  </div>
+
+  <!-- Barra de dirección -->
+  <div class="window-addressbar-row">
+    <span class="window-toolbar-label">Dirección</span>
+    <div class="window-address-bar">
+      <div class="window-address-icon">
+        <img src="{{ $iconBase }}{{ $icon }}.png" alt="" width="14" height="14">
+      </div>
+      <span class="window-address-text">{{ .RelPermalink }}</span>
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="window-content">
+    <div class="window-content-padded">
+
+      {{ if $isPost }}
+      <article class="prose xp-post">
+        <header class="xp-post-header">
+          <h1 class="xp-post-title">{{ partial "post-logo.html" . }}<span>{{ .Title }}</span></h1>
+          {{ with .Description }}<p class="xp-post-desc">{{ . }}</p>{{ end }}
+          <p class="xp-post-meta">
+            <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format ":date_long" }}</time>
+            <span>·</span>
+            <span>{{ .ReadingTime }} min de lectura</span>
+            {{- with .Params.categorias }}
+            <span>·</span>
+            <span>{{ range $i, $c := . }}{{ if $i }}, {{ end }}<a href="{{ "categorias/" | relURL }}{{ $c | urlize }}/">{{ $c }}</a>{{ end }}</span>
+            {{- end }}
+          </p>
+        </header>
+
+        {{- if .Params.toc }}
+        <div class="xp-toc">
+          <div class="xp-toc-title">Índice</div>
+          {{ .TableOfContents }}
+        </div>
+        {{- end }}
+
+        {{ .Content }}
+      </article>
+
+      {{ with .Params.tags }}
+      <div class="xp-post-tags">
+        <span class="xp-post-tags-label">Tags:</span>
+        {{ range . }}
+        <a class="xp-post-tag" href="{{ "tags/" | relURL }}{{ . | urlize }}/">{{ . }}</a>
+        {{ end }}
+      </div>
+      {{ end }}
+
+      {{ $pages := where site.RegularPages "Type" "in" $mainSections }}
+      {{ if and (gt (len $pages) 1) (in $pages .) }}
+      <div class="xp-post-nav">
+        {{ with $pages.Next . }}<a href="{{ .RelPermalink }}" data-title="{{ .Title }}" title="Más reciente">&#9664; {{ .Title }}</a>{{ end }}
+        {{ with $pages.Prev . }}<a href="{{ .RelPermalink }}" data-title="{{ .Title }}" title="Más antigua" style="margin-left:auto;">{{ .Title }} &#9654;</a>{{ end }}
+      </div>
+      {{ end }}
+
+      {{ else }}
+      <!-- Página suelta -->
+      <div class="prose">
+        <h1 style="margin-top:0;">{{ .Title }}</h1>
+        {{ .Content }}
+      </div>
+      {{ end }}
+
+    </div>
+  </div>
+
+  <!-- Barra de estado -->
+  <div class="window-statusbar">
+    {{ if $isPost }}
+    <span class="statusbar-section">{{ .WordCount }} palabras</span>
+    <span class="statusbar-section">{{ .ReadingTime }} min de lectura</span>
+    <span class="statusbar-section">{{ .Date | time.Format "02/01/2006" }}</span>
+    {{ end }}
+  </div>
+
+</div>
+{{ end }}

@@ -1,0 +1,52 @@
+{{- /* Cibergüenzas: copia del head.html del tema con estos cambios: añade nuestra hoja de
+       estilos detrás de la del tema (así no hay que copiar xp.css entero), usa el favicon
+       SVG, no mete Google Analytics y pide el fondo de escritorio en cuanto empieza a
+       cargar la página, en vez de esperar a que se aplique el CSS. */ -}}
+{{- $wallpaper := "bliss.jpg" | relURL -}}
+{{- with site.Params.xp -}}{{- with .wallpaper -}}{{- $wallpaper = . -}}{{- end -}}{{- end -}}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
+
+    {{- /* Va antes de las hojas de estilo para que no espere a que se descarguen.
+           Dentro de una ventana (iframe) marca la página; en el escritorio (no en móvil,
+           que no lo usa salvo en la portada) precarga el fondo. */}}
+    <script>
+      if (window.self !== window.top) {
+        document.documentElement.classList.add('in-iframe');
+      } else if (window.matchMedia('(min-width: 769px)').matches) {
+        var fondo = document.createElement('link');
+        fondo.rel = 'preload';
+        fondo.as = 'image';
+        fondo.href = '{{ $wallpaper }}';
+        fondo.fetchPriority = 'high';
+        document.head.appendChild(fondo);
+      }
+    </script>
+
+    <title>{{ if or .IsHome (eq .Title site.Title) }}{{ site.Title }}{{ else if or (eq .Kind "404") (eq .Title "404 Page not found") }}Error - {{ site.Title }}{{ else }}{{ .Title }} - {{ site.Title }}{{ end }}</title>
+
+    {{- $author := site.Params.name | default site.Title }}
+    <meta name="description" content="{{ .Description | default (cond .IsPage (.Summary | plainify) site.Params.description) }}" />
+    <meta name="author" content="{{ .Params.author | default $author }}" />
+
+    {{ $typo := resources.Get "css/typography.css" }}
+    {{ $xp := resources.Get "css/xp.css" }}
+    {{ $cg := resources.Get "css/ciberguenzas.css" }}
+    {{ $css := slice $typo $xp $cg | resources.Concat "css/bundle.css" | minify }}
+    <link rel="preload stylesheet" as="style" href="{{ $css.RelPermalink }}" />
+
+    <style>:root { --xp-wallpaper: url('{{ $wallpaper }}'); }</style>
+
+    <link rel="icon" type="image/svg+xml" href="{{ site.Params.favicon | default `favicon.svg` | relURL }}" />
+
+    {{ hugo.Generator }}
+
+    {{ template "_internal/opengraph.html" . }}
+    {{ template "_internal/twitter_cards.html" . }}
+    {{ range .AlternativeOutputFormats }}
+    <link rel="{{ .Rel }}" type="{{ .MediaType.Type }}" href="{{ .Permalink }}" title="{{ site.Title }}" />
+    {{ end }}
+
+    <link rel="canonical" href="{{ .Permalink }}" />
+</head>

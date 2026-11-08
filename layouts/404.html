@@ -1,0 +1,26 @@
+{{ define "main" }}
+{{- /* Cibergüenzas: la 404 como el cuadro de error de Windows XP. GitHub Pages sirve 404.html. */ -}}
+<div class="xp-window xp-dialog" data-url="{{ .RelPermalink }}" style="width:440px;">
+  <div class="window-titlebar">
+    <span class="window-title">Error</span>
+    <div class="window-controls">
+      <button class="btn-close" title="Cerrar" data-href="{{ site.Home.RelPermalink }}">&#10005;</button>
+    </div>
+  </div>
+  <div class="window-content">
+    <div class="xp-dialog-body">
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <circle cx="16" cy="16" r="14" fill="#E53935" stroke="#B71C1C" stroke-width="1.5"/>
+        <path d="M10 10l12 12M22 10L10 22" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <strong>No se encuentra la página.</strong>
+        <p>La dirección no existe o se ha movido. Si venías de un enlace, el enlace está mal; si la has escrito tú, revísala.</p>
+      </div>
+    </div>
+    <div class="xp-dialog-buttons">
+      <a class="xp-btn" href="{{ site.Home.RelPermalink }}">Aceptar</a>
+    </div>
+  </div>
+</div>
+{{ end }}

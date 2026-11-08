@@ -1,12 +1,14 @@
 # Cibergüenzas: el muro de la vergüenza de la ciberseguridad.
 # baseURL solo importa en local: el workflow de GitHub Pages lo sobreescribe al desplegar.
-baseURL      = "https://ciberguenzas.github.io/"
-title        = "Cibergüenzas"
-languageCode = "es-es"
-theme        = "hello-friend-ng"
+baseURL                = "https://ciberguenzas.github.io/"
+title                  = "Cibergüenzas"
+languageCode           = "es-es"
+defaultContentLanguage = "es"
+theme                  = "hugo-theme-windowsxp"
 
-enableEmoji     = true
-enableRobotsTXT = true
+enableEmoji          = true
+enableRobotsTXT      = true
+capitalizeListTitles = false   # las tags salen tal cual se escriben (HTB, tshark, mod_dumpio)
 
 [pagination]
   pagerSize = 10
@@ -25,70 +27,41 @@ enableRobotsTXT = true
   tag      = "tags"
   series   = "series"
 
-[params]
-  dateform        = "2 Jan 2006"
-  dateformShort   = "2 Jan"
-  dateformNum     = "2006-01-02"
-  dateformNumTime = "2006-01-02 15:04"
-
-  homeSubtitle = "El muro de la vergüenza de la ciberseguridad. Fallos reales, ridículos y evitables, con la lección detrás de cada uno."
-  description  = "Cibergüenzas: fallos de seguridad reales, ridículos y evitables, contados con humor y con la lección técnica detrás."
-  keywords     = "ciberseguridad, fallos de seguridad, brechas, contraseñas, humor, lecciones, deadlock"
-  images       = [""]
-
-  disableReadOtherPosts    = false
-  enableThemeToggle        = true
-  enableSharingButtons     = true
-  enableReadingTime        = true
-  enableGlobalLanguageMenu = false
-
-  [params.author]
-    name = "deadlock"
-
-  [params.logo]
-    logoMark        = "$"
-    logoText        = "tail -f verguenzas.log"
-    logoHomeLink    = "/"
-    logoCursorColor = "#FF5E5B"
-
-  # Lo lee layouts/partials/favicons.html (override propio, solo favicon.svg)
-  [params.favicon]
-    theme         = "#1b1c1d"
-    msapplication = "#1b1c1d"
-
-  [params.footer]
-    trademark = 2026
-    rss       = true
-    copyright = true
-    author    = true
-    topText   = []
-    bottomText = [
-      "Hecho con <a href=\"https://gohugo.io\">Hugo</a> y una cantidad razonable de vergüenza ajena"
-    ]
-
-[[params.social]]
-  name = "github"
-  url  = "https://github.com/Deadlock-101"
-
 [languages]
   [languages.es]
-    title     = "Cibergüenzas"
-    copyright = "2026 deadlock"
-  [languages.es.params]
-    subtitle       = "El muro de la vergüenza de la ciberseguridad"
-    readOtherPosts = "Más cibergüenzas"
+    languageName = "Español"
+    weight       = 1
 
-# El tema ordena el menú por identifier, de ahí el prefijo numérico
+[params]
+  name        = "deadlock"
+  bio         = "El muro de la vergüenza de la ciberseguridad"
+  description = "Cibergüenzas: fallos de seguridad reales, ridículos y evitables, contados con humor y con la lección técnica detrás."
+  avatar      = "favicon.svg"
+  favicon     = "favicon.svg"
+  github      = "Deadlock-101"
+
+  # Secciones cuyos posts salen como ficheros sueltos en el escritorio y en «Últimas cibergüenzas»
+  mainSections = ["posts"]
+
+  # Ventana que se abre al entrar: la lista de posts, para que lo primero que vea
+  # el lector sea un listado normal y no tenga que adivinar nada.
+  [params.xp]
+    homeWindow      = "/posts/"
+    homeWindowTitle = "Posts"
+    homeWindowIcon  = "MyDocuments"
+
+# Cada entrada del menú es un icono del escritorio, una entrada del menú Inicio y un
+# enlace en «Otros sitios». El identifier tiene que coincidir con la sección.
+# Sin params.icon: el tema pone sus iconos de serie según el identifier
+# (posts: Mis documentos; cualquier otro: carpeta amarilla).
 [menu]
   [[menu.main]]
-    identifier = "1-posts"
-    name       = "Cibergüenzas"
-    url        = "posts/"
+    identifier = "posts"
+    name       = "Posts"
+    url        = "/posts/"
+    weight     = 10
   [[menu.main]]
-    identifier = "2-tags"
+    identifier = "tags"
     name       = "Tags"
-    url        = "tags/"
-  [[menu.main]]
-    identifier = "3-about"
-    name       = "man ciberguenzas"
-    url        = "about/"
+    url        = "/tags/"
+    weight     = 20

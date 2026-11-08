@@ -1,0 +1,108 @@
+{{ define "main" }}
+{{- /* Cibergüenzas: página de una taxonomía (/tags/, /categorias/) como ventana del
+       Explorador con cada término como una carpeta y el número de posts debajo. */ -}}
+{{- $iconBase := "icons/xp/" | relURL -}}
+{{- $homeURL := site.Home.RelPermalink -}}
+{{- $iconDefaults := dict "blog" "MyDocuments" "posts" "MyDocuments" "projects" "MyComputer" "about" "SystemProperties" -}}
+{{- $section := .Section -}}
+{{- $icon := index $iconDefaults $section | default "FolderClosed" -}}
+{{- $windowTitle := .Title -}}
+{{- range site.Menus.main -}}
+  {{- if eq .Identifier $section -}}
+    {{- with .Params.icon -}}{{- $icon = . -}}{{- end -}}
+    {{- with .Params.windowTitle -}}{{- $windowTitle = . -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $terms := .Data.Terms.Alphabetical -}}
+{{- $n := len $terms -}}
+
+<div class="xp-window" data-url="{{ .RelPermalink }}">
+
+  <!-- Barra de título -->
+  <div class="window-titlebar">
+    <div class="window-titlebar-icon">
+      <img src="{{ $iconBase }}{{ $icon }}.png" alt="" width="16" height="16">
+    </div>
+    <span class="window-title">{{ $windowTitle }}</span>
+    <div class="window-controls">
+      <button class="btn-minimize" title="Minimizar">&#8722;</button>
+      <button class="btn-maximize" title="Maximizar">&#9723;</button>
+      <button class="btn-close" title="Cerrar" data-href="{{ $homeURL }}">&#10005;</button>
+    </div>
+  </div>
+
+  <!-- Barra de dirección -->
+  <div class="window-addressbar-row">
+    <span class="window-toolbar-label">Dirección</span>
+    <div class="window-address-bar">
+      <div class="window-address-icon">
+        <img src="{{ $iconBase }}{{ $icon }}.png" alt="" width="14" height="14">
+      </div>
+      <span class="window-address-text">{{ .RelPermalink }}</span>
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="window-content">
+    <div class="xp-explorer">
+
+      <!-- Panel lateral -->
+      <div class="xp-sidebar">
+        <div class="xp-sidebar-panel">
+          <div class="xp-sidebar-header">
+            <svg viewBox="0 0 16 16"><path d="M1 4L1 14Q1 15 2 15L14 15Q15 15 15 14L15 6Q15 5 14 5L8 5L7 4L2 4Q1 4 1 4Z" fill="rgba(255,255,255,0.3)"/></svg>
+            Otros sitios
+          </div>
+          <div class="xp-sidebar-body">
+            {{ range site.Menus.main }}
+            {{ if ne .Identifier $section }}
+            <a href="{{ .URL }}" class="xp-sidebar-link" data-title="{{ .Params.windowTitle | default .Name }}">
+              <img src="{{ $iconBase }}{{ .Params.icon | default (index $iconDefaults .Identifier) | default "FolderClosed" }}.png" alt="" width="16" height="16">
+              {{ .Params.windowTitle | default .Name }}
+            </a>
+            {{ end }}
+            {{ end }}
+            <a href="{{ $homeURL }}" class="xp-sidebar-link xp-hide-in-iframe">
+              <img src="{{ $iconBase }}Desktop.png" alt="" width="16" height="16">
+              Escritorio
+            </a>
+          </div>
+        </div>
+
+        <div class="xp-sidebar-panel">
+          <div class="xp-sidebar-header">
+            <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.2"/><text x="8" y="11.5" text-anchor="middle" font-size="9" font-weight="bold" fill="#fff">i</text></svg>
+            Detalles
+          </div>
+          <div class="xp-sidebar-body">
+            <div class="xp-sidebar-info">
+              <strong>{{ $windowTitle }}</strong><br>
+              {{ $n }} {{ if eq $n 1 }}carpeta{{ else }}carpetas{{ end }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carpetas, una por término -->
+      <div class="xp-main-area">
+        <div class="xp-icon-group-title">{{ $windowTitle }}</div>
+        <div class="xp-icon-grid">
+          {{ range $terms }}
+          <a href="{{ .Page.RelPermalink }}" class="xp-lg-icon" data-title="{{ .Page.Title }}" title="{{ .Count }} {{ if eq .Count 1 }}cibergüenza{{ else }}cibergüenzas{{ end }}">
+            <div class="xp-lg-img"><img src="{{ $iconBase }}FolderClosed.png" alt="" width="48" height="48"></div>
+            <span class="xp-lg-name">{{ .Page.Title }}<br><small>({{ .Count }})</small></span>
+          </a>
+          {{ end }}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Barra de estado -->
+  <div class="window-statusbar">
+    <span class="statusbar-section">{{ $n }} {{ if eq $n 1 }}objeto{{ else }}objetos{{ end }}</span>
+  </div>
+
+</div>
+{{ end }}

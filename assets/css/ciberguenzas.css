@@ -1,0 +1,301 @@
+/* =====================================================================
+   Cibergüenzas sobre hugo-theme-windowsxp.
+   layouts/partials/head.html concatena este fichero detrás de typography.css
+   y xp.css del tema, así que todo lo de aquí pisa al tema sin copiarlo.
+   ===================================================================== */
+
+/* ---------- Escritorio y menú Inicio ---------- */
+
+/* Enlaces que no tienen sentido dentro de un marco (p. ej. «Escritorio» cuando ya estás en él) */
+body.in-iframe .xp-hide-in-iframe { display: none !important; }
+
+.start-menu-caption {
+  padding: 4px 12px 2px;
+  font-size: 10px;
+  font-weight: bold;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.start-menu-item-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* ---------- Posts ---------- */
+
+.window-content .prose.xp-post { max-width: 860px; }
+
+.xp-post-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 0.3em !important;
+  line-height: 1.25;
+}
+.window-content .prose .post-logo-mini {
+  height: 1.5em;
+  width: auto;
+  margin: 0;
+  border: 0;
+  cursor: default;
+  flex-shrink: 0;
+}
+.xp-post-desc {
+  margin: 0 0 0.5em !important;
+  color: #555;
+  font-style: italic;
+}
+.xp-post-meta {
+  margin: 0 0 18px !important;
+  font-size: 11px;
+  color: #666;
+}
+.xp-post-meta span { margin: 0 2px; }
+.xp-post-tags-label {
+  align-self: center;
+  font-size: 11px;
+  color: #666;
+  margin-right: 2px;
+}
+
+/* Logo de la máquina dentro del cuerpo: centrado y sin marco */
+.window-content .prose .post-logo img {
+  width: 220px;
+  max-width: 60%;
+  margin: 0.5em auto 1.5em;
+  border: 0;
+  cursor: default;
+}
+
+/* Encabezados al estilo de los grupos del Explorador */
+.window-content .prose h2 {
+  color: #21498B;
+  border-bottom: 1px solid #C8D6E6;
+  padding-bottom: 2px;
+}
+.window-content .prose h3 { color: #21498B; }
+
+/* Código en línea: rojo vergüenza sobre gris claro */
+.window-content .prose :not(pre) > code {
+  color: #B3261E;
+  background: #F4F4EE;
+  border: 1px solid #E3E2D8;
+  border-radius: 2px;
+  padding: 0.05em 0.35em;
+}
+
+/* Índice (toc: true en el front matter) */
+.xp-toc {
+  margin: 0 0 1.5em;
+  padding: 8px 14px 10px;
+  background: #F7F7F0;
+  border: 1px solid #D4D0C8;
+  border-radius: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.xp-toc-title {
+  font-weight: bold;
+  color: #21498B;
+  margin-bottom: 4px;
+}
+.xp-toc #TableOfContents ul {
+  margin: 0;
+  padding-left: 1.3em;
+  list-style: square;
+}
+.xp-toc #TableOfContents li { margin: 0.1em 0; }
+.xp-toc #TableOfContents a { text-decoration: none; }
+.xp-toc #TableOfContents a:hover { text-decoration: underline; }
+
+/* ---------- Bloques de código: una ventana de terminal dentro del documento ---------- */
+
+.window-content .prose .highlight {
+  position: relative;
+  margin: 1.5em 0;
+  border: 2px solid #0054E3;
+  border-radius: 6px 6px 3px 3px;
+  overflow: hidden;
+  background: #000;
+}
+.window-content .prose .highlight::before {
+  content: "";
+  display: block;
+  height: 22px;
+  padding-left: 8px;
+  color: #fff;
+  font: bold 11px/22px Tahoma, 'Segoe UI', sans-serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  background: linear-gradient(to bottom,
+    #0997FF 0%, #0663DD 6%, #0553D0 10%,
+    #0050EA 20%, #0053EE 80%,
+    #0044CC 92%, #003FBF 100%);
+}
+/* Por defecto el lenguaje va a la izquierda, como título de la ventana */
+.window-content .prose .highlight code[data-lang]::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: 0;
+  left: 8px;
+  line-height: 22px;
+  color: #fff;
+  font: bold 11px/22px Tahoma, 'Segoe UI', sans-serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+/* Shell: la ventana es un PuTTY y el lenguaje pasa a la derecha */
+.window-content .prose .highlight:has(code[data-lang="bash"])::before,
+.window-content .prose .highlight:has(code[data-lang="sh"])::before,
+.window-content .prose .highlight:has(code[data-lang="shell"])::before,
+.window-content .prose .highlight:has(code[data-lang="console"])::before,
+.window-content .prose .highlight:has(code[data-lang="zsh"])::before {
+  content: "deadlock@kali: ~ - PuTTY";
+}
+.window-content .prose .highlight:has(code[data-lang="bash"]) code::before,
+.window-content .prose .highlight:has(code[data-lang="sh"]) code::before,
+.window-content .prose .highlight:has(code[data-lang="shell"]) code::before,
+.window-content .prose .highlight:has(code[data-lang="console"]) code::before,
+.window-content .prose .highlight:has(code[data-lang="zsh"]) code::before {
+  left: auto;
+  right: 8px;
+  font-weight: normal;
+  font-size: 10px;
+  opacity: 0.8;
+}
+.window-content .prose .highlight pre {
+  margin: 0;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 0;
+  background: #000 !important;
+  font-family: 'Lucida Console', Consolas, 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ---------- Shortcodes propios ---------- */
+
+/* {{< nota >}}: el globo de información de Windows */
+.window-content .prose .nota {
+  position: relative;
+  margin: 1.5em 0;
+  padding: 10px 14px 10px 42px;
+  background: #FFFFE1;
+  border: 1px solid #ACA899;
+  border-radius: 3px;
+  font-size: 13px;
+}
+.window-content .prose .nota::before {
+  content: "i";
+  position: absolute;
+  left: 12px;
+  top: 11px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #7FB9FF, #0046D5 70%);
+  border: 1px solid #003399;
+  color: #fff;
+  font: bold 12px/18px Georgia, 'Times New Roman', serif;
+  text-align: center;
+}
+.window-content .prose .nota > :first-child { margin-top: 0; }
+.window-content .prose .nota > :last-child { margin-bottom: 0; }
+
+/* {{< verguenzometro N >}}: una barra de progreso de Windows XP */
+.window-content .prose .verguenzometro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 1.5em 0;
+  padding: 10px 14px;
+  background: #ECE9D8;
+  border: 1px solid #ACA899;
+  border-radius: 3px;
+  font-family: Tahoma, 'Segoe UI', sans-serif;
+  font-size: 12px;
+}
+.verguenzometro__label {
+  font-weight: bold;
+  text-transform: capitalize;
+}
+.verguenzometro__label::after { content: ":"; }
+.verguenzometro__bar {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  background: #fff;
+  border: 1px solid #686868;
+  border-right-color: #D4D0C8;
+  border-bottom-color: #D4D0C8;
+  font-size: 0;      /* oculta los corchetes y los bloques de texto del shortcode */
+  line-height: 0;
+}
+.verguenzometro__seg {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background: #E8E8DF;
+  color: transparent;
+  overflow: hidden;
+}
+.verguenzometro__seg.is-on {
+  background: linear-gradient(to bottom, #A8F0A8 0%, #4FD64F 45%, #1DAE1D 55%, #37C837 100%);
+}
+.verguenzometro__score { font-weight: bold; }
+.verguenzometro__text { font-style: italic; color: #333; }
+
+/* ---------- Listas del Explorador ---------- */
+
+/* xp.css aplica a todos los span de la fila un padding que deja el icono del documento
+   con 0 px de ancho: la fila salía con un hueco donde el tema pone su icono. */
+.detail-list-row .file-icon-small {
+  padding: 0;
+  overflow: visible;
+}
+
+/* ---------- Cuadro de diálogo (404) ---------- */
+
+.xp-dialog { min-height: 0; }
+.xp-dialog .window-content { background: #ECE9D8; }
+.xp-dialog-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 16px 8px;
+  font-size: 12px;
+}
+.xp-dialog-body svg {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+.xp-dialog-body p { margin: 4px 0 0; }
+.xp-dialog-buttons {
+  display: flex;
+  justify-content: center;
+  padding: 4px 12px 12px;
+}
+.xp-btn { min-width: 76px; }
+
+/* ---------- Móvil ---------- */
+
+.wm2003-today-section {
+  padding: 10px 14px 4px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #21498B;
+  background: #fff;
+  border-top: 1px solid #C8C3B8;
+}
+
+@media (max-width: 768px) {
+  /* La columna de fecha del tema (90px) no cabe con hora; se ensancha */
+  .detail-list-header,
+  .detail-list-row {
+    grid-template-columns: 1fr 128px;
+  }
+}
