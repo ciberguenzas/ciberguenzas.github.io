@@ -61,6 +61,13 @@ body.in-iframe .xp-hide-in-iframe { display: none !important; }
   margin-right: 2px;
 }
 
+/* Imágenes más estrechas que la columna (un meme, por ejemplo): centradas, como en Confluence.
+   Las capturas de terminal ocupan todo el ancho y no cambian. */
+.window-content .prose img {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Logo de la máquina dentro del cuerpo: centrado y sin marco */
 .window-content .prose .post-logo img {
   width: 220px;
