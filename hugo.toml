@@ -36,8 +36,8 @@ capitalizeListTitles = false   # las tags salen tal cual se escriben (HTB, tshar
   name        = "deadlock"
   bio         = "El muro de la vergüenza de la ciberseguridad"
   description = "Cibergüenzas: fallos de seguridad reales, ridículos y evitables, contados con humor y con la lección técnica detrás."
-  avatar      = "favicon.svg"
-  favicon     = "favicon.svg"
+  avatar      = "avatar.svg"    # el ¿? del blog: foto de usuario del menú Inicio y de la portada en móvil
+  favicon     = "favicon.png"   # el símbolo del sistema de XP; static/favicon.ico es el mismo icono
   github      = "Deadlock-101"
 
   # Secciones cuyos posts salen como ficheros sueltos en el escritorio y en «Últimas cibergüenzas»

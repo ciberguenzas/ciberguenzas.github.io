@@ -1,6 +1,6 @@
 {{- /* Cibergüenzas: copia del head.html del tema con estos cambios: añade nuestra hoja de
-       estilos detrás de la del tema (así no hay que copiar xp.css entero), usa el favicon
-       SVG, no mete Google Analytics y pide el fondo de escritorio en cuanto empieza a
+       estilos detrás de la del tema (así no hay que copiar xp.css entero), usa nuestro
+       favicon, no mete Google Analytics y pide el fondo de escritorio en cuanto empieza a
        cargar la página, en vez de esperar a que se aplique el CSS. */ -}}
 {{- $wallpaper := "bliss.jpg" | relURL -}}
 {{- with site.Params.xp -}}{{- with .wallpaper -}}{{- $wallpaper = . -}}{{- end -}}{{- end -}}
@@ -38,7 +38,8 @@
 
     <style>:root { --xp-wallpaper: url('{{ $wallpaper }}'); }</style>
 
-    <link rel="icon" type="image/svg+xml" href="{{ site.Params.favicon | default `favicon.svg` | relURL }}" />
+    {{- $favicon := site.Params.favicon | default "favicon.png" }}
+    <link rel="icon" type="{{ cond (strings.HasSuffix $favicon ".svg") "image/svg+xml" "image/png" }}" href="{{ $favicon | relURL }}" />
 
     {{ hugo.Generator }}
 
